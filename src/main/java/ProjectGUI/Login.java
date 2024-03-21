@@ -313,11 +313,10 @@ public class Login extends JFrame {
                 database.child(mobile).child("details").setValueAsync(details);
 
                 // Create a Map to store credentials
-                Map<String, String> credentials = new HashMap<>();
-                credentials.put(mobile, password);
+                Map<String, Object> updateData = new HashMap<>();
+                updateData.put(mobile, password);
 
-                // Save credentials under credential node
-                database.child("credential").setValue(credentials, new DatabaseReference.CompletionListener() {
+                database.child("credential").updateChildren(updateData, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                         if (databaseError != null) {
@@ -329,6 +328,7 @@ public class Login extends JFrame {
                         }
                     }
                 });
+
 //            	
             }
         });
