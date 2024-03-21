@@ -21,6 +21,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import javax.swing.JTabbedPane;
 import javax.swing.SpringLayout;
 import javax.swing.JMenuBar;
@@ -40,6 +47,7 @@ public class mainPage extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTable table;
+	private static DatabaseReference databaseReference;
 
 	/**
 	 * Launch the application.
@@ -91,15 +99,14 @@ public class mainPage extends JFrame {
         Vector<Vector<Object>> data = new Vector<>();
         Vector<String> columnNames = new Vector<>();
         columnNames.add("Bar Code");
-        columnNames.add("Category");
-        columnNames.add("HSN No");
-        columnNames.add("Selling Price");
-        columnNames.add("Marked Price");
         columnNames.add("Name");
-        columnNames.add("Purchased Price");
-        columnNames.add("Tax");
+        columnNames.add("HSN No");
+        columnNames.add("Category");
         columnNames.add("Sub Category");
-
+        columnNames.add("Tax");
+        columnNames.add("Purchased Price");
+        columnNames.add("Marked Price");
+        columnNames.add("Selling Price");
         // Create the table model
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
@@ -147,9 +154,87 @@ public class mainPage extends JFrame {
 		setVisible(true);
 	}
 	private static void addSampleData(DefaultTableModel model) {
-		
-        model.addRow(new Object[]{"Product A", 10.99, "2024-12-31", 100, "123456789"});
-        model.addRow(new Object[]{"Product B", 15.49, "2024-10-15", 50, "987654321"});
-        model.addRow(new Object[]{"Product C", 5.99, "2025-03-20", 200, "456789123"});
+		Properties properties = new Properties();
+        InputStream inputStream = null;
+        
+        String ID="";
+        try {
+            // Load properties file
+            inputStream = new FileInputStream("config.properties");
+            properties.load(inputStream);
+
+            // Access variables
+            ID = properties.getProperty("Login.Id");
+            
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        } 
+        finally {
+            // Close InputStream
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println(ID);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        databaseReference = database.getReference(ID).child("product");
+        System.out.println(databaseReference);
+		databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+            	System.out.println(dataSnapshot.getChildrenCount());
+            	System.out.println(dataSnapshot);
+            	for (DataSnapshot productSnapshot : dataSnapshot.getChildren()) {
+                    String productId = productSnapshot.getKey();
+                    System.out.println("Product ID: " + productId);
+                    String barcode = productSnapshot.child("barcode").getValue(String.class);
+                    System.out.println("Barcode: " + barcode);
+                    String category = productSnapshot.child("category").getValue(String.class);
+                    System.out.println("Category: " + category);
+                    String expiryDate = productSnapshot.child("expiryDate").getValue(String.class);
+                    System.out.println("Expiry Date: " + expiryDate);
+                    String hsn = productSnapshot.child("hsn").getValue(String.class);
+                    System.out.println("HSN: " + hsn);
+                    double markedPrice = productSnapshot.child("markedPrice").getValue(Double.class);
+                    System.out.println("Marked Price: " + markedPrice);
+                    String name = productSnapshot.child("name").getValue(String.class);
+                    System.out.println("Name: " + name);
+                    double purchasedPrice = productSnapshot.child("purchasedPrice").getValue(Double.class);
+                    System.out.println("Purchased Price: " + purchasedPrice);
+                    int quantity = productSnapshot.child("quantity").getValue(Integer.class);
+                    System.out.println("Quantity: " + quantity);
+                    double sellingPrice = productSnapshot.child("sellingPrice").getValue(Double.class);
+                    System.out.println("Selling Price: " + sellingPrice);
+                    String subcategory = productSnapshot.child("subcategory").getValue(String.class);
+                    System.out.println("Subcategory: " + subcategory);
+                    double tax = productSnapshot.child("tax").getValue(Double.class);
+                    System.out.println("Tax: " + tax);
+                    System.out.println("--------------------------------------");
+                    // Now you can use these variables as needed
+                   
+                    
+                  
+                    
+                    
+                   
+                    
+                   
+                    
+                    
+                    
+                    model.addRow(new Object[]{barcode,name,hsn,category,subcategory,tax,purchasedPrice,markedPrice,sellingPrice});
+            	}
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("Error fetching product details: " + databaseError.getMessage());
+            }
+        });
     }
 }
