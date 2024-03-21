@@ -54,7 +54,7 @@ public class AddProduct extends JFrame {
         categoryLabel = new JLabel("Category:");
         categoryField = new JTextField(15);
 
-        subcategoryLabel = new JLabel("Subcategory:");
+        subcategoryLabel = new JLabel("Sub Category:");
         subcategoryField = new JTextField(15);
 
         quantityLabel = new JLabel("Quantity:");
