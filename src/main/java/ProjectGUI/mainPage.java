@@ -6,8 +6,10 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -79,6 +81,44 @@ public class mainPage extends JFrame {
 		menuBar.add(mnNewMenu);
 		
 		JMenuItem mntmNewMenuItem = new JMenuItem("Logout");
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Properties properties = new Properties();
+                InputStream inputStream = null;
+                OutputStream outputStream = null;
+
+                try {
+                    inputStream = new FileInputStream("config.properties");
+                    properties.load(inputStream);
+
+                    // Change property value
+                      properties.setProperty("Login.Id","null");
+                      properties.setProperty("Login.Pass", "null");
+                      properties.setProperty("Login.Status", "false");
+
+                    // Save the modified properties back to the file
+                    outputStream = new FileOutputStream("config.properties");
+                    properties.store(outputStream, null);
+
+                    System.out.println("Property value changed successfully.");
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                } finally {
+                    // Close streams
+                    try {
+                        if (inputStream != null)
+                            inputStream.close();
+                        if (outputStream != null)
+                            outputStream.close();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                Login main = new Login();
+                dispose();
+			}
+		});
+	
 		mnNewMenu.add(mntmNewMenuItem);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -144,7 +184,7 @@ public class mainPage extends JFrame {
         addSampleData(model);
 //		********************************************************************Bill History  Panel******************************************************************************************
 		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_1, null);
+		tabbedPane.addTab("Bill Panel", null, panel_1, null);
 		
 		JPanel panel_2 = new JPanel();
 		tabbedPane.addTab("New tab", null, panel_2, null);

@@ -394,5 +394,6 @@ public class Login extends JFrame {
         panel_1.setLayout(gl_panel_1);
         
         contentPane.setLayout(gl_contentPane);
+        setVisible(true);
     }
 }
