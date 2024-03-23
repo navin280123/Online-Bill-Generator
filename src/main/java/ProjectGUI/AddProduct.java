@@ -1,6 +1,9 @@
 package ProjectGUI;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.FileInputStream;
@@ -8,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -19,6 +24,7 @@ public class AddProduct extends JFrame {
     private JLabel nameLabel, sellingPriceLabel, markedPriceLabel, purchasedPriceLabel, expiryLabel, barcodeLabel, hsnLabel, taxLabel, categoryLabel, subcategoryLabel, quantityLabel;
     private JTextField nameField, sellingPriceField, markedPriceField, purchasedPriceField, expiryField, barcodeField, hsnField, taxField, categoryField, subcategoryField, quantityField;
     private JButton addButton;
+    private List<String> suggestions;
     private DatabaseReference productsRef;
 
     public AddProduct() {
@@ -26,7 +32,6 @@ public class AddProduct extends JFrame {
         setSize(600, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
-
         nameLabel = new JLabel("Name:");
         nameField = new JTextField(15);
 
@@ -44,7 +49,7 @@ public class AddProduct extends JFrame {
 
         barcodeLabel = new JLabel("Barcode:");
         barcodeField = new JTextField(15);
-
+       
         hsnLabel = new JLabel("HSN:");
         hsnField = new JTextField(15);
 
@@ -190,7 +195,9 @@ public class AddProduct extends JFrame {
         setVisible(true);
     }
 
-    private void clearFields() {
+   
+
+	private void clearFields() {
         nameField.setText("");
         sellingPriceField.setText("");
         markedPriceField.setText("");

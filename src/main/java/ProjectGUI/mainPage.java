@@ -183,7 +183,7 @@ public class mainPage extends JFrame {
         panel.add(scrollPane, BorderLayout.CENTER);
         addSampleData(model);
 //		********************************************************************Bill History  Panel******************************************************************************************
-		JPanel panel_1 = new JPanel();
+		BillPanel panel_1 = new BillPanel();
 		tabbedPane.addTab("Bill Panel", null, panel_1, null);
 		
 		JPanel panel_2 = new JPanel();
