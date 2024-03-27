@@ -6,8 +6,10 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -80,6 +82,52 @@ public class mainPage extends JFrame {
 		
 		JMenuItem mntmNewMenuItem = new JMenuItem("Logout");
 		mnNewMenu.add(mntmNewMenuItem);
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Close the current main page frame
+                dispose();
+                
+                // Open the login page frame
+                try {
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                
+                // Update config properties to reset login details
+                Properties properties = new Properties();
+                InputStream inputStream = null;
+                OutputStream outputStream = null;
+                try {
+                    inputStream = new FileInputStream("config.properties");
+                    properties.load(inputStream);
+                    
+                    // Reset login details
+                    properties.setProperty("Login.Id", "null");
+                    properties.setProperty("Login.Pass", "null");
+                    properties.setProperty("Login.Status", "false");
+                    
+                    // Save the modified properties back to the file
+                    outputStream = new FileOutputStream("config.properties");
+                    properties.store(outputStream, null);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } finally {
+                    // Close streams
+                    try {
+                        if (inputStream != null)
+                            inputStream.close();
+                        if (outputStream != null)
+                            outputStream.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+        
+       
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -107,6 +155,7 @@ public class mainPage extends JFrame {
         columnNames.add("Purchased Price");
         columnNames.add("Marked Price");
         columnNames.add("Selling Price");
+        columnNames.add("Quantity");
         // Create the table model
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
@@ -119,6 +168,7 @@ public class mainPage extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         // Add row selection listener
+        
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -143,11 +193,20 @@ public class mainPage extends JFrame {
         panel.add(scrollPane, BorderLayout.CENTER);
         addSampleData(model);
 //		********************************************************************Bill History  Panel******************************************************************************************
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_1, null);
+		billHistory panel_1 = new billHistory();
+		tabbedPane.addTab("Bill Panel", null, panel_1, null);
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		
+		JButton btncreateBill = new JButton("Create Bill");
+		btncreateBill.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CreateBill add = new CreateBill();
+				
+			}
+		});
 		
 		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_2, null);
+		tabbedPane.addTab("Sales", null, panel_2, null);
 		
 		JPanel panel_3 = new JPanel();
 		tabbedPane.addTab("New tab", null, panel_3, null);
@@ -227,7 +286,7 @@ public class mainPage extends JFrame {
                     
                     
                     
-                    model.addRow(new Object[]{barcode,name,hsn,category,subcategory,tax,purchasedPrice,markedPrice,sellingPrice});
+                    model.addRow(new Object[]{barcode,name,hsn,category,subcategory,tax,purchasedPrice,markedPrice,sellingPrice,quantity});
             	}
             }
 

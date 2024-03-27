@@ -70,7 +70,7 @@ public class Login extends JFrame {
                     // Access variables
                     String userStatus = properties.getProperty("Login.Status");
                     if(userStatus.equals("true")) {
-                    	mainPage main = new mainPage();
+                    	mainPage frame = new mainPage();
                     }
                     else {
                       try {
