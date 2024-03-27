@@ -322,6 +322,38 @@ public class Login extends JFrame {
                         if (databaseError != null) {
                             System.out.println("Data could not be saved " + databaseError.getMessage());
                         } else {
+
+                            Properties properties = new Properties();
+                            InputStream inputStream = null;
+                            OutputStream outputStream = null;
+
+                            try {
+                                inputStream = new FileInputStream("config.properties");
+                                properties.load(inputStream);
+
+                                // Change property value
+	                              properties.setProperty("Login.Id",mobile);
+	                              properties.setProperty("Login.Pass", password);
+	                              properties.setProperty("Login.Status", "true");
+
+                                // Save the modified properties back to the file
+                                outputStream = new FileOutputStream("config.properties");
+                                properties.store(outputStream, null);
+
+                                System.out.println("Property value changed successfully.");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } finally {
+                                // Close streams
+                                try {
+                                    if (inputStream != null)
+                                        inputStream.close();
+                                    if (outputStream != null)
+                                        outputStream.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         	mainPage main = new mainPage();
                         	dispose();
                             System.out.println("Data saved successfully.");
