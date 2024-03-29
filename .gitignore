@@ -19,3 +19,4 @@ buildNumber.properties
 .classpath
 pom.xml
 pom.xml
+*.xml
