@@ -260,6 +260,7 @@ public class Login extends JFrame {
         JLabel lblStoreName = new JLabel("Store Name:");
         lblStoreName.setFont(new Font("Tahoma", Font.PLAIN, 14));
         
+        
         JTextField storeNameField = new JTextField();
         storeNameField.setColumns(10);
         
