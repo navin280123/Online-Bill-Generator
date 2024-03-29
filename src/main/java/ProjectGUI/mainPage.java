@@ -147,6 +147,7 @@ public class mainPage extends JFrame {
         columnNames.add("Purchased Price");
         columnNames.add("Marked Price");
         columnNames.add("Selling Price");
+        columnNames.add("Quantity");
         // Create the table model
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
@@ -176,7 +177,7 @@ public class mainPage extends JFrame {
         JButton  btn = new JButton("Add Product");
         btn.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		AddProduct add = new AddProduct();
+        		AddProduct add = new AddProduct(model);
         	}
         });
         panel.add(btn,BorderLayout.SOUTH);
@@ -267,7 +268,7 @@ public class mainPage extends JFrame {
                     
                     
                     
-                    model.addRow(new Object[]{barcode,name,hsn,category,subcategory,tax,purchasedPrice,markedPrice,sellingPrice});
+                    model.addRow(new Object[]{barcode,name,hsn,category,subcategory,tax,purchasedPrice,markedPrice,sellingPrice,quantity});
             	}
             }
 

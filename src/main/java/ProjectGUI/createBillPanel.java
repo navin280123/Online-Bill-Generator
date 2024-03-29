@@ -7,8 +7,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -23,6 +25,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.awt.event.ActionEvent;
 
 public class createBillPanel extends JFrame {
@@ -30,7 +35,7 @@ public class createBillPanel extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JTable table;
-    private JTextField barcodeTextField;
+    private JComboBox barcodeTextField;
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     private boolean isRunning = true;
@@ -70,10 +75,14 @@ public class createBillPanel extends JFrame {
         // Barcode Entry Panel
         JPanel barcodePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel barcodeLabel = new JLabel("Enter Product Code:");
-        barcodeTextField = new JTextField(15);
+        barcodeTextField = new JComboBox();
+        barcodeTextField.setEditable(true);
+        addProduct(barcodeTextField);
+        
         JButton addButton = new JButton("Add Product");
         addButton.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		String barocdevalue= (String) barcodeTextField.getSelectedItem();
         		
         	}
         });
@@ -83,7 +92,6 @@ public class createBillPanel extends JFrame {
         		isRunning= false;
         	}
         });
-        addButton.addActionListener(e -> addProduct());
         barcodePanel.add(barcodeLabel);
         barcodePanel.add(barcodeTextField);
         barcodePanel.add(addButton);
@@ -149,8 +157,79 @@ public class createBillPanel extends JFrame {
     }
 
 
-    private void addProduct() {
-        String barcode = barcodeTextField.getText();
+    private void addProduct(JComboBox barcodeTextField2) {
+    	Properties properties = new Properties();
+        InputStream inputStream = null;
+        
+        String ID="";
+        try {
+            // Load properties file
+            inputStream = new FileInputStream("config.properties");
+            properties.load(inputStream);
+
+            // Access variables
+            ID = properties.getProperty("Login.Id");
+            
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        } 
+        finally {
+            // Close InputStream
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println(ID);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        databaseReference = database.getReference(ID).child("product");
+        System.out.println(databaseReference);
+		databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+            	System.out.println(dataSnapshot.getChildrenCount());
+            	System.out.println(dataSnapshot);
+            	for (DataSnapshot productSnapshot : dataSnapshot.getChildren()) {
+                    String productId = productSnapshot.getKey();
+                    System.out.println("Product ID: " + productId);
+                    String barcode = productSnapshot.child("barcode").getValue(String.class);
+                    System.out.println("Barcode: " + barcode);
+                    String category = productSnapshot.child("category").getValue(String.class);
+                    System.out.println("Category: " + category);
+                    String expiryDate = productSnapshot.child("expiryDate").getValue(String.class);
+                    System.out.println("Expiry Date: " + expiryDate);
+                    String hsn = productSnapshot.child("hsn").getValue(String.class);
+                    System.out.println("HSN: " + hsn);
+                    double markedPrice = productSnapshot.child("markedPrice").getValue(Double.class);
+                    System.out.println("Marked Price: " + markedPrice);
+                    String name = productSnapshot.child("name").getValue(String.class);
+                    System.out.println("Name: " + name);
+                    double purchasedPrice = productSnapshot.child("purchasedPrice").getValue(Double.class);
+                    System.out.println("Purchased Price: " + purchasedPrice);
+                    int quantity = productSnapshot.child("quantity").getValue(Integer.class);
+                    System.out.println("Quantity: " + quantity);
+                    double sellingPrice = productSnapshot.child("sellingPrice").getValue(Double.class);
+                    System.out.println("Selling Price: " + sellingPrice);
+                    String subcategory = productSnapshot.child("subcategory").getValue(String.class);
+                    System.out.println("Subcategory: " + subcategory);
+                    double tax = productSnapshot.child("tax").getValue(Double.class);
+                    System.out.println("Tax: " + tax);
+                    System.out.println("--------------------------------------");
+                    
+                    barcodeTextField2.addItem(barcode);
+            	}
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("Error fetching product details: " + databaseError.getMessage());
+            }
+        });
+
         // Perform actions to add product with the barcode entered by the user
         // You need to implement this method according to your requirements
     }

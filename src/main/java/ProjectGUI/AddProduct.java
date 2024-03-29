@@ -3,6 +3,7 @@ package ProjectGUI;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -27,7 +28,7 @@ public class AddProduct extends JFrame {
     private List<String> suggestions;
     private DatabaseReference productsRef;
 
-    public AddProduct() {
+    public AddProduct(DefaultTableModel model) {
         setTitle("Add Product");
         setSize(600, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -88,6 +89,7 @@ public class AddProduct extends JFrame {
                                    ", Tax: " + tax + ", Category: " + category + ", Subcategory: " + subcategory +
                                    ", Quantity: " + quantity);
                 addProductToDatabase();
+                model.addRow(new Object[]{barcode,name,hsn,category,subcategory,tax,purchasedPrice,markedPrice,sellingPrice});
                 // You may want to clear the fields after adding the product
                 clearFields();
             }
@@ -212,11 +214,11 @@ public class AddProduct extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new AddProduct();
-            }
-        });
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                new AddProduct(null));
+//            }
+//        });
     }
 
     private void addProductToDatabase() {
@@ -276,5 +278,7 @@ public class AddProduct extends JFrame {
 
         // Add the product to the database under the generated key
         productsRef.child(barcode).setValueAsync(product);
+        
+        JOptionPane.showMessageDialog(null, "Product Added SuccessFully", "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 }
