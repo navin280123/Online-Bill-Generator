@@ -1,84 +1,64 @@
 package ProjectGUI;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.event.ActionEvent;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
+import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.util.Vector;
+import java.awt.event.ActionEvent;
 
 public class BillPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	private JTable table;
 
-	/**
-	 * Create the panel.
-	 */
+	
 	public BillPanel() {
-		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+		setLayout(new BorderLayout());
 		
-		// Create data for the table
-        Vector<Vector<Object>> data = new Vector<>();
-        Vector<String> columnNames = new Vector<>();
-        columnNames.add("Bar Code");
-        columnNames.add("Name");
-        columnNames.add("HSN No");
-        columnNames.add("Category");
-        columnNames.add("Sub Category");
-        columnNames.add("Tax");
-        columnNames.add("Purchased Price");
-        columnNames.add("Marked Price");
-        columnNames.add("Selling Price");
-        // Create the table model
-        DefaultTableModel model = new DefaultTableModel(data, columnNames) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Disable cell editing
-            }
-        };
-        // Create the table
-        JTable table = new JTable(model);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(122, 0, 470, 364);
+		add(scrollPane,BorderLayout.CENTER);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"S. No.", "Bill Number", "Bill Date", "Customer Name", "Payment", "Amount"
+			}
+		));
+		table.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
+		JPanel buttonPanel = new JPanel(new GridBagLayout());
+        add(buttonPanel, BorderLayout.WEST);
 
-        // Add row selection listener
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    int selectedRow = table.getSelectedRow();
-                    if (selectedRow != -1) {
-                        System.out.println("Selected Product: " + table.getValueAt(selectedRow, 0));
-                    }
-                }
-            }
-        });
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(10, 10, 10, 10);
 
-        // Add the table to a scroll pane
-        JScrollPane scrollPane = new JScrollPane(table);
-        JButton  btn = new JButton("Create Bill");
-        btn.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		createBillPanel add = new createBillPanel();
-        	}
-        });
-        add(btn,BorderLayout.SOUTH);
-        add(scrollPane, BorderLayout.CENTER);
-        addSampleData(model);
+		
+		JButton btncreateBill = new JButton("Create Bill");
+		
+		btncreateBill.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				createBillPanel add = new createBillPanel();
+				add.setVisible(true);
+			}
+		});
+		btncreateBill.setFont(new Font("Trebuchet MS", Font.BOLD, 14));
+		btncreateBill.setBounds(0, 166, 121, 23);
+		 buttonPanel.add(btncreateBill, gbc);
 
 	}
-
-	private void addSampleData(DefaultTableModel model) {
-		// TODO Auto-generated method stub
-		model.addRow(new Object[]{"barcode","name","hsn","category","subcategory","tax","purchasedPrice","markedPrice","sellingPrice"});
-	}
-
 }
