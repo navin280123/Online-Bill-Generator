@@ -20,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -29,6 +30,9 @@ import javax.swing.border.EmptyBorder;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserRecord;
+import com.google.firebase.auth.UserRecord.CreateRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +43,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DatabaseError;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 
@@ -70,7 +76,7 @@ public class Login extends JFrame {
                     // Access variables
                     String userStatus = properties.getProperty("Login.Status");
                     if(userStatus.equals("true")) {
-                    	mainPage frame = new mainPage();
+                    	mainPage main = new mainPage();
                     }
                     else {
                       try {
@@ -254,6 +260,7 @@ public class Login extends JFrame {
         JLabel lblStoreName = new JLabel("Store Name:");
         lblStoreName.setFont(new Font("Tahoma", Font.PLAIN, 14));
         
+        
         JTextField storeNameField = new JTextField();
         storeNameField.setColumns(10);
         
@@ -307,28 +314,78 @@ public class Login extends JFrame {
                 details.put("email", email);
                 details.put("storeType", storeType);
                 details.put("password", password); 
-                
-                DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-                // Save details under mobile node
-                database.child(mobile).child("details").setValueAsync(details);
+                if(verifyInputText(password, mobile,email)) {
+                	DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
-                // Create a Map to store credentials
-                Map<String, Object> updateData = new HashMap<>();
-                updateData.put(mobile, password);
+                	// Save details under mobile node
+                	database.child(mobile).child("details").setValueAsync(details);
 
-                database.child("credential").updateChildren(updateData, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            System.out.println("Data could not be saved " + databaseError.getMessage());
-                        } else {
-                        	mainPage main = new mainPage();
-                        	dispose();
-                            System.out.println("Data saved successfully.");
-                        }
-                    }
-                });
+                	// Create a Map to store credentials
+                	Map<String, Object> updateData = new HashMap<>();
+                	updateData.put(mobile, password);
 
+                	// Create a Map to store email and phone
+                	Map<String, Object> emailAndPhoneData = new HashMap<>();
+                	emailAndPhoneData.put(mobile,email);
+
+                	database.child("credential").updateChildren(updateData, new DatabaseReference.CompletionListener() {
+                	    @Override
+                	    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                	        if (databaseError != null) {
+                	            System.out.println("Data could not be saved " + databaseError.getMessage());
+                	        } else {
+                	            database.child("EmailAndPhone").updateChildren(emailAndPhoneData, new DatabaseReference.CompletionListener() {
+                	                @Override
+                	                public void onComplete(DatabaseError emailAndPhoneError, DatabaseReference emailAndPhoneReference) {
+                	                    if (emailAndPhoneError != null) {
+                	                        System.out.println("Email and Phone data could not be saved " + emailAndPhoneError.getMessage());
+                	                    } else {
+                	                        Properties properties = new Properties();
+                	                        InputStream inputStream = null;
+                	                        OutputStream outputStream = null;
+
+                	                        try {
+                	                            inputStream = new FileInputStream("config.properties");
+                	                            properties.load(inputStream);
+
+                	                            // Change property value
+                	                            properties.setProperty("Login.Id", mobile);
+                	                            properties.setProperty("Login.Pass", password);
+                	                            properties.setProperty("Login.Status", "true");
+
+                	                            // Save the modified properties back to the file
+                	                            outputStream = new FileOutputStream("config.properties");
+                	                            properties.store(outputStream, null);
+
+                	                            System.out.println("Property value changed successfully.");
+                	                        } catch (IOException e) {
+                	                            e.printStackTrace();
+                	                        } finally {
+                	                            // Close streams
+                	                            try {
+                	                                if (inputStream != null)
+                	                                    inputStream.close();
+                	                                if (outputStream != null)
+                	                                    outputStream.close();
+                	                            } catch (IOException e) {
+                	                                e.printStackTrace();
+                	                            }
+                	                        }
+                	                        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+                	                		// Create a new user with email and password
+                	                		createUserWithEmailAndPassword(firebaseAuth, email, password);
+                	                        mainPage main = new mainPage();
+                	                        dispose();
+                	                        System.out.println("Data saved successfully.");
+                	                    }
+                	                }
+                	            });
+                	        }
+                	    }
+                	});
+
+                }
 //            	
             }
         });
@@ -394,5 +451,45 @@ public class Login extends JFrame {
         panel_1.setLayout(gl_panel_1);
         
         contentPane.setLayout(gl_contentPane);
+        setVisible(true);
     }
+    public static boolean verifyInputText(String password, String mobile, String mail) {
+
+		if (password.length() < 8 || password.length() == 0) {
+			JOptionPane.showMessageDialog(null, "Password Must contain 8 letters or More", "Invalid Password",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (mobile.length() != 10) {
+			JOptionPane.showMessageDialog(null, "Invalid Phone Number", "Invalid Mobile", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		if (!isValidEmail(mail)) {
+			JOptionPane.showMessageDialog(null, "Invalid Email", "Invalid Email", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean isValidEmail(String email) {
+		String EMAIL_REGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+		Pattern pattern = Pattern.compile(EMAIL_REGEX);
+		Matcher matcher = pattern.matcher(email);
+		return matcher.matches();
+	}
+	public static boolean createUserWithEmailAndPassword(FirebaseAuth firebaseAuth, String email, String password) {
+		try {
+			// Create request to create a new user
+			CreateRequest request = new CreateRequest().setEmail(email).setPassword(password);
+
+			// Create the user
+			UserRecord userRecord = firebaseAuth.createUser(request);
+			System.out.println("Successfully created new user: " + userRecord.getUid());
+			return true;
+		} catch (Exception e) {
+			System.err.println("Error creating user: " + e.getMessage());
+			return false;
+		}
+	}
+
 }
