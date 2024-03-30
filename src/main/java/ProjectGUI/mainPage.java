@@ -11,12 +11,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
@@ -31,16 +29,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import javax.swing.JTabbedPane;
-import javax.swing.SpringLayout;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.JList;
-import javax.swing.JSpinner;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
@@ -48,7 +41,7 @@ public class mainPage extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTable table;
+	private static ArrayList<Product> pr;
 	private static DatabaseReference databaseReference;
 
 	/**
@@ -143,6 +136,7 @@ public class mainPage extends JFrame {
         columnNames.add("HSN No");
         columnNames.add("Category");
         columnNames.add("Sub Category");
+        columnNames.add("Expiry Date");
         columnNames.add("Tax");
         columnNames.add("Purchased Price");
         columnNames.add("Marked Price");
@@ -183,6 +177,7 @@ public class mainPage extends JFrame {
         panel.add(btn,BorderLayout.SOUTH);
         panel.add(scrollPane, BorderLayout.CENTER);
         addSampleData(model);
+        System.out.println(model.toString());
 //		********************************************************************Bill History  Panel******************************************************************************************
 		BillPanel panel_1 = new BillPanel();
 		tabbedPane.addTab("Bill Panel", null, panel_1, null);
@@ -256,19 +251,7 @@ public class mainPage extends JFrame {
                     double tax = productSnapshot.child("tax").getValue(Double.class);
                     System.out.println("Tax: " + tax);
                     System.out.println("--------------------------------------");
-                    // Now you can use these variables as needed
-                   
-                    
-                  
-                    
-                    
-                   
-                    
-                   
-                    
-                    
-                    
-                    model.addRow(new Object[]{barcode,name,hsn,category,subcategory,tax,purchasedPrice,markedPrice,sellingPrice,quantity});
+                    model.addRow(new Object[]{barcode,name,hsn,category,subcategory,expiryDate,tax,purchasedPrice,markedPrice,sellingPrice,quantity});
             	}
             }
 
@@ -277,5 +260,6 @@ public class mainPage extends JFrame {
                 System.out.println("Error fetching product details: " + databaseError.getMessage());
             }
         });
+		
     }
 }

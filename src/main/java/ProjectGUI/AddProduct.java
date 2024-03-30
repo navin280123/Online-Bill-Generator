@@ -89,7 +89,7 @@ public class AddProduct extends JFrame {
                                    ", Tax: " + tax + ", Category: " + category + ", Subcategory: " + subcategory +
                                    ", Quantity: " + quantity);
                 addProductToDatabase();
-                model.addRow(new Object[]{barcode,name,hsn,category,subcategory,tax,purchasedPrice,markedPrice,sellingPrice});
+                model.addRow(new Object[]{barcode,name,hsn,category,subcategory,expiryDate,tax,purchasedPrice,markedPrice,sellingPrice,quantity});
                 // You may want to clear the fields after adding the product
                 clearFields();
             }
