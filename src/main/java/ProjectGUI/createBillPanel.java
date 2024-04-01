@@ -31,9 +31,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -62,22 +65,23 @@ public class createBillPanel extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					createBillPanel frame = new createBillPanel();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					createBillPanel frame = new createBillPanel(null);
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
 	}
 
 	/**
 	 * Create the frame.
+	 * @param model 
 	 */
-	public createBillPanel() {
+	public createBillPanel(DefaultTableModel model) {
 		setTitle("Create Bill");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		 setResizable(false);
@@ -129,8 +133,9 @@ public class createBillPanel extends JFrame {
 		spinner.setBounds(368, 102, 86, 20);
 		contentPane.add(spinner);
 		
-		ProductArrayList pal = new ProductArrayList();
-		ProductHelper ph = new ProductHelper(pal.productArrayList);
+//		ProductArrayList pal = new ProductArrayList();
+//		ProductHelper ph = new ProductHelper(pal.productArrayList);
+		
 		JComboBox<String> Items = new JComboBox<>();
 		addsuggestions(Items);
 	    Items.setBounds(10, 102, 289, 20);
@@ -144,8 +149,12 @@ public class createBillPanel extends JFrame {
 				Product selectedProduct =product.get(list.get(Items.getSelectedIndex()));
 		        
 		        System.out.println(product.size());
-		        
-		        totalsum(selectedProduct.sellingPrice*(Integer)spinner.getValue());
+//		        double total =(selectedProduct.sellingPrice+((selectedProduct.tax/selectedProduct.sellingPrice)*100))	*(Integer)spinner.getValue();
+//		        DecimalFormat df = new DecimalFormat("#.##");
+//		        String formattedValuetotal = df.format(total);
+//		        double roundedTotal =Double.parseDouble(formattedValuetotal);
+
+//		        totalsum(roundedTotal);
 		        addProductToBillNode((Integer)spinner.getValue(),billNumber,selectedProduct);
 			}
 		});
@@ -177,13 +186,10 @@ public class createBillPanel extends JFrame {
 		btnSave.setAlignmentY(Component.TOP_ALIGNMENT);
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// String billNumber = billnofield.getText();
-	             //   String billDate = billdatefield.getText();
-	               // String productName = PNamefield.getText();
-//	                double productPrice = Double.parseDouble(PPricefield.getText());
-//	                int productQuantity = Integer.parseInt(PQuantityfield.getText());
 				isRunning= false;
-	               
+	            savebillDetails(billNumber);
+	            model.addRow(new Object[]{model.getRowCount()+1,billNumber,lblbillno.getText(),namefield.getText(),"Cash",totalAmountfield.getText()});
+	            dispose();
 			}
 		});
 		btnSave.setFont(new Font("Trebuchet MS", Font.BOLD, 14));
@@ -238,6 +244,31 @@ public class createBillPanel extends JFrame {
                 }
             }
         }).start();
+        
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+            	int option = JOptionPane.showConfirmDialog(
+                        createBillPanel.this, 
+                        "Do You Want To Save The Bill", 
+                        "Confirmation", 
+                        JOptionPane.YES_NO_OPTION
+                    );
+                    
+                    if (option == JOptionPane.YES_OPTION) {
+                        savebillDetails(billNumber);
+                        isRunning=false;
+                    } else {
+                    	 DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference().child(ID).child("Bills");
+
+                         // Path to the node you want to delete
+
+                         // Delete the node
+                         databaseRef.child(billNumber).removeValueAsync();
+                         isRunning=false;
+                    }
+            }
+        });
         // Initialize Firebase
         setVisible(true);
         // Fetch data from Firebase
@@ -347,13 +378,20 @@ public class createBillPanel extends JFrame {
         billref = FirebaseDatabase.getInstance().getReference().child(ID).child("Bills");
         // Create a new product map
         Map<String, Object> product = new HashMap<>();
+        double tax =((selectedProduct.tax/selectedProduct.sellingPrice)*100);
+        double total =(selectedProduct.sellingPrice+((selectedProduct.tax/selectedProduct.sellingPrice)*100))	*(Integer)spinner.getValue();
+        DecimalFormat df = new DecimalFormat("#.##");
+        String formattedValuetax = df.format(tax);
+        String formattedValuetotal = df.format(total);
+        double roundedtax = Double.parseDouble(formattedValuetax);
+        double roundedTotal =Double.parseDouble(formattedValuetotal);
         product.put("name", selectedProduct.name);
         product.put("MRP",selectedProduct.markedPrice);
         product.put("discount", selectedProduct.markedPrice-selectedProduct.sellingPrice);
         product.put("sellingPrice", selectedProduct.sellingPrice);
-        product.put("tax",((selectedProduct.tax/selectedProduct.sellingPrice)*100));
+        product.put("tax",roundedtax);
         product.put("quantity", quantity);
-        product.put("total",(selectedProduct.sellingPrice+((selectedProduct.tax/selectedProduct.sellingPrice)*100))	*(Integer)spinner.getValue());
+        product.put("total",roundedTotal);
         // Generate a new key for the product
         // Add the product to the database under the generated key
         billref.child(billNumber).child(selectedProduct.barcode).setValueAsync(product);
@@ -366,6 +404,7 @@ public class createBillPanel extends JFrame {
         billsReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+            	totalsum=0;
             	ArrayList<billadapter> bills = new ArrayList<>();
                     for (DataSnapshot productSnapshot : dataSnapshot.getChildren()) {
                     	String name = productSnapshot.child("name").getValue(String.class);
@@ -375,6 +414,7 @@ public class createBillPanel extends JFrame {
                     	Double tax = productSnapshot.child("tax").getValue(Double.class);
                     	Double quantity = productSnapshot.child("quantity").getValue(Double.class);
                     	Double total = productSnapshot.child("total").getValue(Double.class);
+                    	totalsum(total);
                     	bills.add(new billadapter(name,mrp,discount,sp,tax,quantity,total));
                     }
                     tablerefresh(bills);
@@ -396,6 +436,32 @@ public class createBillPanel extends JFrame {
 			model.addRow(new Object[]{model.getRowCount()+1,b.name,b.mrp,b.discount,b.sp,b.tax,b.quantity,b.total});
 		}
        
+	}
+	public static String formatDateString(String inputDateStr) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        try {
+            Date inputDate = inputFormat.parse(inputDateStr);
+            return outputFormat.format(inputDate);
+        } catch (Exception e) {
+            System.out.println("Error parsing date: " + e.getMessage());
+            return null;
+        }
+    }
+
+	private void savebillDetails(String billNumber) {
+		billref = FirebaseDatabase.getInstance().getReference().child(ID).child("Bills");
+        // Create a new product map
+        Map<String, Object> product = new HashMap<>();
+        product.put("BillNo", billNumber);
+        product.put("BillDate",formatDateString(billNumber.substring(0,8)) );
+        product.put("CustomerName", namefield.getText());
+        product.put("Payment", "Cash");
+        product.put("Amount",totalAmountfield.getText());
+        // Generate a new key for the product
+        // Add the product to the database under the generated key
+        billref.child(billNumber).child("details").setValueAsync(product);
 	}
 }
 class billadapter{
