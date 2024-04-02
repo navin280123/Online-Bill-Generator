@@ -20,16 +20,16 @@ public class test {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
-        acdata.add(new pdfProduct(0, 0,0, 0, 0, 0, 0, "sdkfh"));
-        acdata.add(new pdfProduct(0, 0, 0,0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0,0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0,0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0,0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0,0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0,0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0,0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0,0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0,0, 0, 0, "sdkfjhs"));
+        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfh",0));
+        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs",0));
+        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs",0));
+        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs",0));
+        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs",0));
+        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs",0));
+        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs",0));
+        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs",0));
+        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs",0));
+        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs",0));
         
         try {
             test igen = new test();
@@ -60,21 +60,20 @@ public class test {
 
             drawHeader();
             LinkedHashMap<String, String> invoiceInfoData = new LinkedHashMap<>();
-            invoiceInfoData.put("INVOICE NO", "");
-            invoiceInfoData.put("INVOICE DATE", "");
+            invoiceInfoData.put("INVOICE NO", "102332");
+            invoiceInfoData.put("INVOICE DATE", "03/04/2024");
             drawSingleRowTable(invoiceInfoData, 40, 680, 110, 20, 5, 10);
 
-            LinkedHashMap<String, String> siteData = new LinkedHashMap<>();
-            siteData.put("BILL TO", "");
-            siteData.put("PH. NUMBER", "");
+            LinkedHashMap<String, String> siteData = new LinkedHashMap<>(); 
+            siteData.put("BILL TO", "AYUSH");
+            siteData.put("PH. NUMBER", "9559594477");
             drawSingleRowTable(siteData, 40, 620, 130, 20, 5, 10);
 
             
 
             HashMap<String,String> descData = new HashMap<>();
             descData.put("SN NO,","dgsd");
-            descData.put("VAT","");
-            descData.put("TOTAL","");
+            descData.put("TOTAL","0000"); //TOTAL AMOUNT
             drawDescriptionTable(descData);
 
         } catch (IOException e) {
@@ -159,7 +158,6 @@ public class test {
         contents.stroke();
         
         
-        
 
         
 
@@ -173,6 +171,13 @@ public class test {
         contents.addRect(400, 180, 160, 370);
         contents.stroke();
         
+        drawTableCellText("SIZE", 410, 560, Color.BLACK, 10);
+        contents.addRect(400, 550, 45, 27);
+        contents.stroke();
+        contents.addRect(400, 180, 45, 370);
+        contents.stroke();
+        
+        
         
         //Invoice Currency AUD column cell
         contents.addRect(40, 130, 300, 50);
@@ -182,7 +187,7 @@ public class test {
         contents.addRect(340, 130, 220, 50);
         contents.stroke();
         drawTableCellText("TOTAL", 350, 150, Color.BLACK, PDType1Font.HELVETICA_BOLD, 14);
-//        drawTableCellText(data.get("TOTAL"), 480, 150, Color.BLACK, PDType1Font.HELVETICA_BOLD, 14);
+        drawTableCellText(data.get("TOTAL"), 480, 150, Color.BLACK, PDType1Font.HELVETICA_BOLD, 14);
     }
 
     private void drawSingleRowTable(Map<String, String> data, float left, float top, float col_width, float row_height, float padding, float font_size) throws IOException {
@@ -238,6 +243,7 @@ public class test {
     			drawTableCellText(String.valueOf(s.discount), 230, height, Color.BLACK, PDType1Font.HELVETICA, 10);  //discount
     	        drawTableCellText(String.valueOf(s.mrp), 180, height, Color.BLACK, PDType1Font.HELVETICA, 10); //MRp
     	        drawTableCellText(s.itemName, 100, height, Color.BLACK, PDType1Font.HELVETICA, 10); //product name
+    	        drawTableCellText(String.valueOf(s.size), 410, height, Color.BLACK, PDType1Font.HELVETICA, 10); //size
     			height -= 15;
     		} catch (IOException e) {
     			// TODO Auto-generated catch block
@@ -260,7 +266,7 @@ public class test {
         contents.setNonStrokingColor(Color.BLACK);
         contents.setFont(PDType1Font.HELVETICA, 18);
         contents.newLineAtOffset(40, 770);
-        contents.showText("GROCERY STORE");
+        contents.showText("GARMENT STORE");
         contents.endText();
 
         contents.beginText();
@@ -289,10 +295,10 @@ class pdfProduct{
 //    drawTableCellText("70", 180, 530, Color.BLACK, PDType1Font.HELVETICA, 10); //MRp
 //    drawTableCellText("OIL", 100, 530, Color.BLACK, PDType1Font.HELVETICA, 10); //product name
 	
-	int sn;
+	int sn,size;
 	double tax,mrp,sp,discount,amount,qnt;
 	String itemName;
-	pdfProduct(int sn,double tax,double mrp,double sp,double discount,double amount,double qnt,String itemName){
+	pdfProduct(int sn,double tax,double mrp,double sp,double discount,double amount,double qnt,String itemName, int size){
 		this.sn =sn;
 		this.tax =tax;
 		this.mrp=mrp;
@@ -301,6 +307,7 @@ class pdfProduct{
 		this.discount=discount;
 		this.amount = amount;
 		this.itemName = itemName;
+		this.size=size;
 	}
 	
 	
