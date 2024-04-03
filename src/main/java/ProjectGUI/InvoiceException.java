@@ -1,3 +1,5 @@
+package ProjectGUI;
+
 public class InvoiceException extends Exception {
 
     public InvoiceException(Throwable t)
