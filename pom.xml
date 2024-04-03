@@ -73,22 +73,22 @@
     </pluginRepository>
   </pluginRepositories>
   <build>
-    <sourceDirectory>F:\java\javainc\project\src\main\java</sourceDirectory>
-    <scriptSourceDirectory>F:\java\javainc\project\src\main\scripts</scriptSourceDirectory>
-    <testSourceDirectory>F:\java\javainc\project\src\test\java</testSourceDirectory>
-    <outputDirectory>F:\java\javainc\project\target\classes</outputDirectory>
-    <testOutputDirectory>F:\java\javainc\project\target\test-classes</testOutputDirectory>
+    <sourceDirectory>D:\Eclipse\project\src\main\java</sourceDirectory>
+    <scriptSourceDirectory>D:\Eclipse\project\src\main\scripts</scriptSourceDirectory>
+    <testSourceDirectory>D:\Eclipse\project\src\test\java</testSourceDirectory>
+    <outputDirectory>D:\Eclipse\project\target\classes</outputDirectory>
+    <testOutputDirectory>D:\Eclipse\project\target\test-classes</testOutputDirectory>
     <resources>
       <resource>
-        <directory>F:\java\javainc\project\src\main\resources</directory>
+        <directory>D:\Eclipse\project\src\main\resources</directory>
       </resource>
     </resources>
     <testResources>
       <testResource>
-        <directory>F:\java\javainc\project\src\test\resources</directory>
+        <directory>D:\Eclipse\project\src\test\resources</directory>
       </testResource>
     </testResources>
-    <directory>F:\java\javainc\project\target</directory>
+    <directory>D:\Eclipse\project\target</directory>
     <finalName>project-0.0.1-SNAPSHOT</finalName>
     <pluginManagement>
       <plugins>
@@ -227,7 +227,7 @@
               <goal>site</goal>
             </goals>
             <configuration>
-              <outputDirectory>F:\java\javainc\project\target\site</outputDirectory>
+              <outputDirectory>D:\Eclipse\project\target\site</outputDirectory>
               <reportPlugins>
                 <reportPlugin>
                   <groupId>org.apache.maven.plugins</groupId>
@@ -243,7 +243,7 @@
               <goal>deploy</goal>
             </goals>
             <configuration>
-              <outputDirectory>F:\java\javainc\project\target\site</outputDirectory>
+              <outputDirectory>D:\Eclipse\project\target\site</outputDirectory>
               <reportPlugins>
                 <reportPlugin>
                   <groupId>org.apache.maven.plugins</groupId>
@@ -254,7 +254,7 @@
           </execution>
         </executions>
         <configuration>
-          <outputDirectory>F:\java\javainc\project\target\site</outputDirectory>
+          <outputDirectory>D:\Eclipse\project\target\site</outputDirectory>
           <reportPlugins>
             <reportPlugin>
               <groupId>org.apache.maven.plugins</groupId>
@@ -266,7 +266,7 @@
     </plugins>
   </build>
   <reporting>
-    <outputDirectory>F:\java\javainc\project\target\site</outputDirectory>
+    <outputDirectory>D:\Eclipse\project\target\site</outputDirectory>
   </reporting>
 </project>
 <!-- https://mvnrepository.com/artifact/com.google.auth/google-auth-library-oauth2-http -->
