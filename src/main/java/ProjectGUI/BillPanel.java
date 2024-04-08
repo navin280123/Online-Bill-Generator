@@ -15,17 +15,17 @@ import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
-import java.util.Random;
+
 
 public class BillPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private JTable table;
     DefaultTableModel model;
+    private String ID="";
 	private static DatabaseReference databaseReference;
     public BillPanel() {
         setLayout(new BorderLayout());
@@ -58,8 +58,62 @@ public class BillPanel extends JPanel {
                 if (e.getClickCount() == 1) {
                     JTable target = (JTable) e.getSource();
                     int row = target.getSelectedRow();
-                    // Do something with the selected row, e.g., display details or perform an action
-                    System.out.println("Clicked row: " + row);
+                    if (row != -1) {
+                        System.out.println("Selected Product: " + table.getValueAt(row,1));
+                            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                            DatabaseReference billsReference = firebaseDatabase.getReference(ID).child("Bills").child(String.valueOf(table.getValueAt(row,1)));
+                            
+                            billsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                	System.out.println("frebase called");
+                                		ArrayList<pdfProduct> bills = new ArrayList<>();
+                                		HashMap<String,String> billDetails = new HashMap<>();
+                                		billDetails.put("Customer Name",dataSnapshot.child("details").child("CustomerName").getValue(String.class));
+                                		billDetails.put("Bill Date",dataSnapshot.child("details").child("BillDate").getValue(String.class));
+                                		billDetails.put("Phone",ID);
+                                		billDetails.put("InvoiceNo",String.valueOf(table.getValueAt(row,1)));
+                                		billDetails.put("Amount",dataSnapshot.child("details").child("Amount").getValue(String.class));
+//                                		System.out.println(billDetails);
+
+                                		int n =1;
+                                        for (DataSnapshot productSnapshot : dataSnapshot.getChildren()) {
+                                        	if(!productSnapshot.getKey().equals("details")) {
+                                            	String name = productSnapshot.child("name").getValue(String.class);
+                                            	Double mrp = productSnapshot.child("MRP").getValue(Double.class);
+                                            	Double discount = productSnapshot.child("discount").getValue(Double.class);
+                                            	Double sp = productSnapshot.child("sellingPrice").getValue(Double.class);
+                                            	Double tax = productSnapshot.child("tax").getValue(Double.class);
+                                            	Double quantity = productSnapshot.child("quantity").getValue(Double.class);
+                                            	Double total = productSnapshot.child("total").getValue(Double.class);
+                                            	System.out.println(name);
+//                                            	pdfProduct(int sn,double tax,double mrp,double sp,double discount,double amount,double qnt,String itemName)
+                                            	bills.add(new pdfProduct(n,tax,mrp,sp,discount,total,quantity,name));
+                                            	n++;
+                                        	}
+                                        }
+                                        System.out.println(bills.get(0).itemName);
+                                        
+                                        try {
+                                        	System.out.println("calling harwareInvoice from BillPanel");
+                                        	groceryInvoice hi =new groceryInvoice();
+											hi.Generate(billDetails, bills);
+										} catch (InvoiceException e) {
+											// TODO Auto-generated catch block
+											System.out.println(e);
+											e.printStackTrace();
+										}
+                                        
+                                    
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    System.out.println("The read failed: " + databaseError.getCode());
+                                }
+                            });
+                        
+                    }
                 }
             }
         });
@@ -93,7 +147,7 @@ public class BillPanel extends JPanel {
         Properties properties = new Properties();
         InputStream inputStream = null;
         
-        String ID="";
+
         try {
             // Load properties file
             inputStream = new FileInputStream("config.properties");

@@ -28,7 +28,7 @@ public class clothingInvoice {
         
         try {
             clothingInvoice igen = new clothingInvoice();
-            igen.Generate(null);
+            igen.Generate();
         } catch (InvoiceException e) {
             e.printStackTrace();
         }
@@ -50,7 +50,7 @@ public class clothingInvoice {
         }
     }
 
-    public void Generate(HashMap<String, String> data) throws InvoiceException {
+    public void Generate() throws InvoiceException {
         try {
 
             drawHeader();

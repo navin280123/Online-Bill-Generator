@@ -13,28 +13,6 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 public class groceryInvoice {
 	static ArrayList<pdfProduct> acdata = new ArrayList<>();
-
-    public static void main(String[] args) {
-        System.out.println("Grocery Invoice World!");
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfh"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        
-        try {
-        	groceryInvoice igen = new groceryInvoice();
-            igen.Generate(null);
-        } catch (InvoiceException e) {
-            e.printStackTrace();
-        }
-    }
-
     final PDDocument document;
     final PDPage page;
     final PDPageContentStream contents;
@@ -51,32 +29,34 @@ public class groceryInvoice {
         }
     }
 
-    public void Generate(HashMap<String, String> data) throws InvoiceException {
+    public void Generate(HashMap<String,String> data,ArrayList<pdfProduct> productlistdata) throws InvoiceException {
         try {
 
             drawHeader();
             LinkedHashMap<String, String> invoiceInfoData = new LinkedHashMap<>();
-            invoiceInfoData.put("INVOICE NO", "102332");
-            invoiceInfoData.put("INVOICE DATE", "03/04/2024");
+            invoiceInfoData.put("INVOICE NO", data.get("InvoiceNo"));
+            invoiceInfoData.put("INVOICE DATE", data.get("Bill Date"));
             drawSingleRowTable(invoiceInfoData, 40, 680, 110, 20, 5, 10);
 
             LinkedHashMap<String, String> siteData = new LinkedHashMap<>(); 
-            siteData.put("BILL TO", "AYUSH");
-            siteData.put("PH. NUMBER", "9559594477");
+            siteData.put("BILL TO", data.get("Customer Name"));
+            siteData.put("PH. NUMBER", data.get("Phone"));
             drawSingleRowTable(siteData, 40, 620, 130, 20, 5, 10);
 
             
 
             HashMap<String,String> descData = new HashMap<>();
             
-            descData.put("TOTAL","0000"); //TOTAL AMOUNT
-            drawDescriptionTable(descData);
+            descData.put("TOTAL",data.get("Amount")); //TOTAL AMOUNT
+            populateData(productlistdata);
+
+           drawDescriptionTable(descData);
 
         } catch (IOException e) {
             throw new InvoiceException(e);
         }
 
-        saveInvoice("C:\\Users\\AYUSH\\Desktop\\grocery\\groceryInvoice.pdf");
+        saveInvoice("invoice.pdf");
     }
 
     private void saveInvoice(String fileName) throws InvoiceException {
@@ -84,6 +64,8 @@ public class groceryInvoice {
             //Close the Content Stream before closing
             contents.close();
             document.save(fileName);
+            System.out.println("Pdfview called");
+            PDFViewer pdfv = new PDFViewer(fileName);
         } catch (IOException e) {
             throw new InvoiceException("Unable to save Invoice", e);
         }
@@ -101,7 +83,6 @@ public class groceryInvoice {
         contents.stroke();
 //        drawTableCellText("1", 55, 530, Color.BLACK, PDType1Font.HELVETICA, 10);
 //        drawTableCellText("2", 55, 515, Color.BLACK, PDType1Font.HELVETICA, 10);
-       populateData(acdata);
         
         drawTableCellText("ITEM NAME", 90, 560, Color.BLACK, 10);
         contents.addRect(40, 550, 125, 27);

@@ -182,11 +182,9 @@ public class mainPage extends JFrame {
 		BillPanel panel_1 = new BillPanel();
 		tabbedPane.addTab("Bill Panel", null, panel_1, null);
 		
-		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_2, null);
+		Report panel_2 = new Report();
+		tabbedPane.addTab("Report", null, panel_2, null);
 		
-		JPanel panel_3 = new JPanel();
-		tabbedPane.addTab("New tab", null, panel_3, null);
 		setVisible(true);
 	}
 	private static void addSampleData(DefaultTableModel model) {
@@ -226,31 +224,31 @@ public class mainPage extends JFrame {
             	System.out.println(dataSnapshot.getChildrenCount());
             	System.out.println(dataSnapshot);
             	for (DataSnapshot productSnapshot : dataSnapshot.getChildren()) {
-                    String productId = productSnapshot.getKey();
-                    System.out.println("Product ID: " + productId);
+//                    String productId = productSnapshot.getKey();
+//                    System.out.println("Product ID: " + productId);
                     String barcode = productSnapshot.child("barcode").getValue(String.class);
-                    System.out.println("Barcode: " + barcode);
+//                    System.out.println("Barcode: " + barcode);
                     String category = productSnapshot.child("category").getValue(String.class);
-                    System.out.println("Category: " + category);
+//                    System.out.println("Category: " + category);
                     String expiryDate = productSnapshot.child("expiryDate").getValue(String.class);
-                    System.out.println("Expiry Date: " + expiryDate);
+//                    System.out.println("Expiry Date: " + expiryDate);
                     String hsn = productSnapshot.child("hsn").getValue(String.class);
-                    System.out.println("HSN: " + hsn);
+//                    System.out.println("HSN: " + hsn);
                     double markedPrice = productSnapshot.child("markedPrice").getValue(Double.class);
-                    System.out.println("Marked Price: " + markedPrice);
+//                    System.out.println("Marked Price: " + markedPrice);
                     String name = productSnapshot.child("name").getValue(String.class);
-                    System.out.println("Name: " + name);
+//                    System.out.println("Name: " + name);
                     double purchasedPrice = productSnapshot.child("purchasedPrice").getValue(Double.class);
-                    System.out.println("Purchased Price: " + purchasedPrice);
+//                    System.out.println("Purchased Price: " + purchasedPrice);
                     int quantity = productSnapshot.child("quantity").getValue(Integer.class);
-                    System.out.println("Quantity: " + quantity);
+//                    System.out.println("Quantity: " + quantity);
                     double sellingPrice = productSnapshot.child("sellingPrice").getValue(Double.class);
-                    System.out.println("Selling Price: " + sellingPrice);
+//                    System.out.println("Selling Price: " + sellingPrice);
                     String subcategory = productSnapshot.child("subcategory").getValue(String.class);
-                    System.out.println("Subcategory: " + subcategory);
+//                    System.out.println("Subcategory: " + subcategory);
                     double tax = productSnapshot.child("tax").getValue(Double.class);
-                    System.out.println("Tax: " + tax);
-                    System.out.println("--------------------------------------");
+//                    System.out.println("Tax: " + tax);
+//                    System.out.println("--------------------------------------");
                     model.addRow(new Object[]{barcode,name,hsn,category,subcategory,expiryDate,tax,purchasedPrice,markedPrice,sellingPrice,quantity});
             	}
             }

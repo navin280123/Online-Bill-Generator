@@ -13,35 +13,15 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 public class hardwareInvoice {
+	
 	static ArrayList<pdfProduct> acdata = new ArrayList<>();
-
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfh"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        acdata.add(new pdfProduct(0, 0, 0, 0, 0, 0, 0, "sdkfjhs"));
-        
-        try {
-        	hardwareInvoice igen = new hardwareInvoice();
-            igen.Generate(null);
-        } catch (InvoiceException e) {
-            e.printStackTrace();
-        }
-    }
-
     final PDDocument document;
     final PDPage page;
     final PDPageContentStream contents;
     final Color ACCENT_COLOR = new Color(136, 144, 192);
 
     public hardwareInvoice() throws InvoiceException {
+    	System.out.println("hardwareInvoice Called");
         document = new PDDocument();
         page = new PDPage(PDRectangle.A4);
         document.addPage(page);
@@ -52,32 +32,34 @@ public class hardwareInvoice {
         }
     }
 
-    public void Generate(HashMap<String, String> data) throws InvoiceException {
+    public void Generate(HashMap<String,String> data,ArrayList<pdfProduct> productlistdata) throws InvoiceException {
         try {
-
+        	System.out.println("generate method called");
             drawHeader();
             LinkedHashMap<String, String> invoiceInfoData = new LinkedHashMap<>();
-            invoiceInfoData.put("INVOICE NO", "102332");
-            invoiceInfoData.put("INVOICE DATE", "03/04/2024");
+            invoiceInfoData.put("INVOICE NO", data.get("InvoiceNo"));
+            invoiceInfoData.put("INVOICE DATE", data.get("Bill Date"));
             drawSingleRowTable(invoiceInfoData, 40, 680, 110, 20, 5, 10);
 
             LinkedHashMap<String, String> siteData = new LinkedHashMap<>(); 
-            siteData.put("BILL TO", "AYUSH");
-            siteData.put("PH. NUMBER", "9559594477");
+            siteData.put("BILL TO", data.get("Customer Name"));
+            siteData.put("PH. NUMBER", data.get("Phone"));
             drawSingleRowTable(siteData, 40, 620, 130, 20, 5, 10);
 
             
 
             HashMap<String,String> descData = new HashMap<>();
             
-            descData.put("TOTAL","0000"); //TOTAL AMOUNT
+            descData.put("TOTAL",data.get("Amount")); //TOTAL AMOUNT
+            populateData(productlistdata);
+
             drawDescriptionTable(descData);
 
         } catch (IOException e) {
             throw new InvoiceException(e);
         }
 
-        saveInvoice("C:\\Users\\AYUSH\\Desktop\\Invoice2.pdf");
+        saveInvoice("invoice.pdf");
     }
 
     private void saveInvoice(String fileName) throws InvoiceException {
@@ -85,6 +67,8 @@ public class hardwareInvoice {
             //Close the Content Stream before closing
             contents.close();
             document.save(fileName);
+            System.out.println("Pdfview called");
+            PDFViewer pdfv = new PDFViewer(fileName);
         } catch (IOException e) {
             throw new InvoiceException("Unable to save Invoice", e);
         }
@@ -102,7 +86,6 @@ public class hardwareInvoice {
         contents.stroke();
 //        drawTableCellText("1", 55, 530, Color.BLACK, PDType1Font.HELVETICA, 10);
 //        drawTableCellText("2", 55, 515, Color.BLACK, PDType1Font.HELVETICA, 10);
-       populateData(acdata);
         
         drawTableCellText("ITEM NAME", 90, 560, Color.BLACK, 10);
         contents.addRect(40, 550, 125, 27);
@@ -277,16 +260,7 @@ public class hardwareInvoice {
         }
     }
 }
-class pdfProduct{
-//	drawTableCellText(s, 55, height, Color.BLACK, PDType1Font.HELVETICA, 10); //sn
-//	drawTableCellText("400", 510, 530, Color.BLACK, PDType1Font.HELVETICA, 10); //amount
-//	drawTableCellText("4", 380, 530, Color.BLACK, PDType1Font.HELVETICA, 10);  //quantity
-//	drawTableCellText("2.5", 340, 530, Color.BLACK, PDType1Font.HELVETICA, 10); //tax
-//	drawTableCellText("60", 305, 530, Color.BLACK, PDType1Font.HELVETICA, 10); //selling price
-//	drawTableCellText("10%", 230, 530, Color.BLACK, PDType1Font.HELVETICA, 10);  //discount
-//    drawTableCellText("70", 180, 530, Color.BLACK, PDType1Font.HELVETICA, 10); //MRp
-//    drawTableCellText("OIL", 100, 530, Color.BLACK, PDType1Font.HELVETICA, 10); //product name
-	
+class pdfProduct{	
 	int sn;
 	double tax,mrp,sp,discount,amount,qnt;
 	String itemName;
