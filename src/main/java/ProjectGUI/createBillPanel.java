@@ -80,8 +80,9 @@ public class createBillPanel extends JFrame {
 	/**
 	 * Create the frame.
 	 * @param model 
+	 * @param billNumber 
 	 */
-	public createBillPanel(DefaultTableModel model) {
+	public createBillPanel(DefaultTableModel model, String billNumber) {
 		setTitle("Create Bill");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		 setResizable(false);
@@ -98,9 +99,7 @@ public class createBillPanel extends JFrame {
 		lblBillNo.setBounds(10, 11, 73, 14);
 		contentPane.add(lblBillNo);
 		
-		LocalDateTime now = LocalDateTime.now();
-        // Format date and time as string without separators
-        String billNumber = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+		
         
 		JLabel lblbillno = new JLabel(billNumber);
 		lblbillno.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));

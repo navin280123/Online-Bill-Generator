@@ -15,6 +15,8 @@ import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -26,6 +28,7 @@ public class BillPanel extends JPanel {
     private JTable table;
     DefaultTableModel model;
     private String ID="";
+    private DatabaseReference billref;
 	private static DatabaseReference databaseReference;
     public BillPanel() {
         setLayout(new BorderLayout());
@@ -130,7 +133,10 @@ public class BillPanel extends JPanel {
         JButton btncreateBill = new JButton("Create Bill");
 
         btncreateBill.addActionListener(e -> {
-            createBillPanel add = new createBillPanel(model);
+        	LocalDateTime now = LocalDateTime.now();
+            // Format date and time as string without separators
+            String billNumber = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+            createBillPanel add = new createBillPanel(model,billNumber);
             add.setVisible(true);
         });
         btncreateBill.setFont(new Font("Trebuchet MS", Font.BOLD, 14));
