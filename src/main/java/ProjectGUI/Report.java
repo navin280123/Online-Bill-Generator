@@ -91,6 +91,17 @@ public class Report extends JPanel {
         gbc_thisYear.gridx = 0;
         gbc_thisYear.gridy = 2;
         buttonPanel.add(thisYear, gbc_thisYear);
+        
+        JButton refresh = new JButton("Refresh");
+        refresh.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		getAllData();
+        	}
+        });
+        GridBagConstraints gbc_refresh = new GridBagConstraints();
+        gbc_refresh.gridx = 0;
+        gbc_refresh.gridy = 3;
+        buttonPanel.add(refresh, gbc_refresh);
 
         reportPanel = new JPanel(new BorderLayout());
         add(reportPanel, BorderLayout.CENTER);

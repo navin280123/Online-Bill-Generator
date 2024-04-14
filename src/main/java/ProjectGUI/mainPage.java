@@ -175,7 +175,10 @@ public class mainPage extends JFrame {
         	}
         });
         panel.add(btn,BorderLayout.SOUTH);
+        
         panel.add(scrollPane, BorderLayout.CENTER);
+        
+        
         addSampleData(model);
         System.out.println(model.toString());
 //		********************************************************************Bill History  Panel******************************************************************************************

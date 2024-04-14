@@ -20,6 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 public class BillPanel extends JPanel {
@@ -141,6 +143,18 @@ public class BillPanel extends JPanel {
         });
         btncreateBill.setFont(new Font("Trebuchet MS", Font.BOLD, 14));
         buttonPanel.add(btncreateBill, gbc);
+        
+        JButton refresh = new JButton("Refresh");
+        refresh.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		removeAllRows(model);
+        		populateRandomData();
+        	}
+        });
+        GridBagConstraints gbc_refresh = new GridBagConstraints();
+        gbc_refresh.gridx = 0;
+        gbc_refresh.gridy = 1;
+        buttonPanel.add(refresh, gbc_refresh);
 
         // Populate table with random data
         populateRandomData();
@@ -203,5 +217,13 @@ public class BillPanel extends JPanel {
             }
         });
     }
+ // Method to remove all items from the table
+    private void removeAllRows(DefaultTableModel model) {
+        int rowCount = model.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            model.removeRow(i);
+        }
+    }
+
 }
 
