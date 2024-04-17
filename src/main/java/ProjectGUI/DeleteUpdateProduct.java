@@ -296,7 +296,7 @@ public class DeleteUpdateProduct extends JFrame {
         JOptionPane.showMessageDialog(null, "Product Updated SuccessFully", "Success", JOptionPane.INFORMATION_MESSAGE);
         model.removeRow(selectedRow);
         model.addRow(new Object[]{barcode,productName,hsn,category,subcategory,expiryDate,tax,purchasedPrice,markedPrice,sellingPrice,quantity});
-		
+		dispose();
 	}
 
 

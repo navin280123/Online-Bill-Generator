@@ -257,3 +257,20 @@ public class groceryInvoice {
         }
     }
 }
+class pdfProduct{	
+	int sn;
+	double tax,mrp,sp,discount,amount,qnt;
+	String itemName;
+	pdfProduct(int sn,double tax,double mrp,double sp,double discount,double amount,double qnt,String itemName){
+		this.sn =sn;
+		this.tax =tax;
+		this.mrp=mrp;
+		this.sp=sp;
+		this.qnt=qnt;
+		this.discount=discount;
+		this.amount = amount;
+		this.itemName = itemName;
+		
+	}
+	
+}

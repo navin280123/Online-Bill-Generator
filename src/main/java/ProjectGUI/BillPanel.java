@@ -110,7 +110,7 @@ public class BillPanel extends JPanel {
         											hi.Generate(billDetails, bills,StoreType);
                                                 	}
                                                 	catch(InvoiceException e) {
-                                                		System.out.println("error occured");
+                                                		
                                                 	}
                                                 }
 
