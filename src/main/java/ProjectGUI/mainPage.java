@@ -161,6 +161,19 @@ public class mainPage extends JFrame {
                     int selectedRow = table.getSelectedRow();
                     if (selectedRow != -1) {
                         System.out.println("Selected Product: " + table.getValueAt(selectedRow, 0));
+                        ArrayList<String> data = new ArrayList<>();
+                        data.add((String) table.getValueAt(selectedRow, 0));
+                        data.add((String) table.getValueAt(selectedRow, 1));
+                        data.add((String) table.getValueAt(selectedRow, 2));
+                        data.add((String) table.getValueAt(selectedRow, 3));
+                        data.add((String) table.getValueAt(selectedRow, 4));
+                        data.add((String) table.getValueAt(selectedRow, 5));
+                        data.add(String.valueOf(table.getValueAt(selectedRow, 6)) );
+                        data.add(String.valueOf(table.getValueAt(selectedRow, 7)));
+                        data.add(String.valueOf(table.getValueAt(selectedRow, 8)));
+                        data.add(String.valueOf(table.getValueAt(selectedRow, 9)));
+                        data.add(String.valueOf(table.getValueAt(selectedRow, 10)));
+                        DeleteUpdateProduct c = new DeleteUpdateProduct(data,model,selectedRow);
                     }
                 }
             }

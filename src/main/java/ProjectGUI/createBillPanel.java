@@ -377,8 +377,11 @@ public class createBillPanel extends JFrame {
         billref = FirebaseDatabase.getInstance().getReference().child(ID).child("Bills");
         // Create a new product map
         Map<String, Object> product = new HashMap<>();
-        double tax =((selectedProduct.tax/selectedProduct.sellingPrice)*100);
-        double total =(selectedProduct.sellingPrice+((selectedProduct.tax/selectedProduct.sellingPrice)*100))	*(Integer)spinner.getValue();
+        System.out.println(selectedProduct.tax);
+        System.out.println(selectedProduct.sellingPrice);
+        System.out.println((selectedProduct.tax/selectedProduct.sellingPrice)*100);
+        double tax =(((selectedProduct.tax/100)*selectedProduct.sellingPrice)*(Integer)spinner.getValue());
+        double total =(selectedProduct.sellingPrice)*(Integer)spinner.getValue()+tax;
         DecimalFormat df = new DecimalFormat("#.##");
         String formattedValuetax = df.format(tax);
         String formattedValuetotal = df.format(total);

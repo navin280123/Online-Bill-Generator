@@ -30,6 +30,7 @@ public class BillPanel extends JPanel {
     private JTable table;
     DefaultTableModel model;
     private String ID="";
+    private String StoreType ="";
     private DatabaseReference billref;
 	private static DatabaseReference databaseReference;
     public BillPanel() {
@@ -98,16 +99,28 @@ public class BillPanel extends JPanel {
                                         	}
                                         }
                                         System.out.println(bills.get(0).itemName);
-                                        
-                                        try {
-                                        	System.out.println("calling harwareInvoice from BillPanel");
-                                        	groceryInvoice hi =new groceryInvoice();
-											hi.Generate(billDetails, bills);
-										} catch (InvoiceException e) {
-											// TODO Auto-generated catch block
-											System.out.println(e);
-											e.printStackTrace();
-										}
+                                        	DatabaseReference storeType = firebaseDatabase.getReference(ID).child("details").child("storeType");
+                                        	storeType.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                	StoreType= dataSnapshot.getValue(String.class);
+                                                	System.out.println("calling harwareInvoice from BillPanel");
+                                                	try {
+                                                	groceryInvoice hi =new groceryInvoice();
+        											hi.Generate(billDetails, bills,StoreType);
+                                                	}
+                                                	catch(InvoiceException e) {
+                                                		System.out.println("error occured");
+                                                	}
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+                                                    System.err.println("Error fetching data: " + databaseError);
+                                                }
+                                            });
+                                        	
+										
                                         
                                     
                                 }

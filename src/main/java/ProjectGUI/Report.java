@@ -146,7 +146,10 @@ public class Report extends JPanel {
 		System.out.println("report online called");
     	Properties properties = new Properties();
         InputStream inputStream = null;
-        
+        todays.clear();
+        month.clear();
+        year.clear();
+        fillhashmap();
         String ID="";
         try {
             // Load properties file

@@ -29,10 +29,10 @@ public class groceryInvoice {
         }
     }
 
-    public void Generate(HashMap<String,String> data,ArrayList<pdfProduct> productlistdata) throws InvoiceException {
+    public void Generate(HashMap<String,String> data,ArrayList<pdfProduct> productlistdata, String storeType) throws InvoiceException {
         try {
 
-            drawHeader();
+            drawHeader(storeType);
             LinkedHashMap<String, String> invoiceInfoData = new LinkedHashMap<>();
             invoiceInfoData.put("INVOICE NO", data.get("InvoiceNo"));
             invoiceInfoData.put("INVOICE DATE", data.get("Bill Date"));
@@ -225,7 +225,7 @@ public class groceryInvoice {
     	
     }
 
-    private void drawHeader() throws IOException {
+    private void drawHeader(String storeType) throws IOException {
 
         contents.beginText();
         contents.setFont(PDType1Font.HELVETICA_BOLD, 30);
@@ -238,7 +238,7 @@ public class groceryInvoice {
         contents.setNonStrokingColor(Color.BLACK);
         contents.setFont(PDType1Font.HELVETICA, 18);
         contents.newLineAtOffset(40, 770);
-        contents.showText("GROCERY STORE");
+        contents.showText(storeType+" STORE");
         contents.endText();
 
         contents.beginText();

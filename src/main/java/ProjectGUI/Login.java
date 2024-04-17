@@ -286,11 +286,11 @@ public class Login extends JFrame {
         lblStoreType.setFont(new Font("Tahoma", Font.PLAIN, 14));
         
         JComboBox<String> storeTypeComboBox = new JComboBox<>();
-        storeTypeComboBox.addItem("Retail");
-        storeTypeComboBox.addItem("Grocery");
-        storeTypeComboBox.addItem("Pharmacy");
-        storeTypeComboBox.addItem("Electronics");
-        storeTypeComboBox.addItem("Other");
+        storeTypeComboBox.addItem("RETAILS");
+        storeTypeComboBox.addItem("GROCERY");
+        storeTypeComboBox.addItem("PHARMACY");
+        storeTypeComboBox.addItem("ELECTRONICS");
+        storeTypeComboBox.addItem("HARDWARE");
         
         JLabel lblPasswordSignUp = new JLabel("Password:");
         lblPasswordSignUp.setFont(new Font("Tahoma", Font.PLAIN, 14));
