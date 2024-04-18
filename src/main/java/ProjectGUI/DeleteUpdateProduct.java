@@ -318,19 +318,6 @@ public class DeleteUpdateProduct extends JFrame {
 
 
 
-	private void clearFields() {
-        nameField.setText("");
-        sellingPriceField.setText("");
-        markedPriceField.setText("");
-        purchasedPriceField.setText("");
-        expiryField.setText("");
-        barcodeField.setText("");
-        hsnField.setText("");
-        taxField.setText("");
-        categoryField.setText("");
-        subcategoryField.setText("");
-        quantityField.setText("");
-    }
 
     public static void main(String[] args) {
 //        SwingUtilities.invokeLater(new Runnable() {
