@@ -68,14 +68,20 @@ This project consists of a mobile app and a Java desktop app designed to streaml
 2. **Compile and run the Java application** (using an IDE or command line):
 
     ```bash
-    javac Main.java
-    java Main
+    javac Login.java
+    java Login
     ```
 
 ## 📋 Usage
 
 - **Mobile App**: Log in and scan product barcodes. The data will be synchronized to the desktop application.
 - **Desktop App**: Manage products, create bills, generate PDFs, and track sales records.
+
+## 📸 Screenshots
+Following are the Screenshot:-
+
+
+
 
 ## 🤝 Contributing
 
