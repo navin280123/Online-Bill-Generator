@@ -79,7 +79,56 @@ This project consists of a mobile app and a Java desktop app designed to streaml
 
 ## 📸 Screenshots
 Following are the Screenshot:-
+**1.Login.java**
 
+![image](https://github.com/user-attachments/assets/f0c96c2c-bdfd-4c68-961c-b8f213be1315)
+
+*Feature*
+1. Login Feature.
+2. Signup Feature.
+
+**2.mainPage.java**
+
+*Product Panel*
+![image](https://github.com/user-attachments/assets/5fabfd90-37c4-4be3-82c5-af7d2dce506d)
+
+*Bill Panel*
+
+![image](https://github.com/user-attachments/assets/cb587ab2-4bfd-47fe-b6b6-eb2ff519724e)
+
+*Report Panel*
+![image](https://github.com/user-attachments/assets/26f6a716-7ea4-4bab-aa9d-8012c089bf82)
+
+
+*Feature*
+1. User DashBoard to Access all the Option with ease.
+
+**3. Add Product**
+
+![image](https://github.com/user-attachments/assets/7c3b6aaa-7bd1-4beb-b48c-08d6b4d8045a)
+
+*Features*
+
+1. Add The Product which will be Stored in the firebase realtime database.
+
+**4. Create Bill **
+
+![image](https://github.com/user-attachments/assets/fd10162e-363e-40dd-acbd-336a1b79a6f1)
+
+
+*Features*
+
+1. This Panel is used to Create Bill with user details and this panel is in sync with app if the app scan any bar code which is present in the product list of this particular store the amount will be automatically calulated. User has also option to add product from drop down menu.
+   
+
+**PDF Viewer**
+
+![image](https://github.com/user-attachments/assets/9f244d4d-aa83-4b82-a5be-b395a7ea7568)
+
+
+*Features*
+
+1. User can see the history of the say in pdf formate.
 
 
 
