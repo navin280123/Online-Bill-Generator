@@ -279,6 +279,5 @@
     <outputDirectory>F:\java\javainc\project\target\site</outputDirectory>
   </reporting>
 </project>
-<!-- https://mvnrepository.com/artifact/com.google.auth/google-auth-library-oauth2-http -->
 
 

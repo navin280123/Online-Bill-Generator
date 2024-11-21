@@ -21,18 +21,17 @@ import java.util.Properties;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class AddProduct extends JFrame {
+public class DeleteUpdateProduct extends JFrame {
     private JLabel nameLabel, sellingPriceLabel, markedPriceLabel, purchasedPriceLabel, expiryLabel, barcodeLabel, hsnLabel, taxLabel, categoryLabel, subcategoryLabel, quantityLabel;
     private JTextField nameField, sellingPriceField, markedPriceField, purchasedPriceField, expiryField, barcodeField, hsnField, taxField, categoryField, subcategoryField, quantityField;
-    private JButton addButton;
-    private List<String> suggestions;
-    private DatabaseReference productsRef;
-
-    public AddProduct(DefaultTableModel model) {
-        setTitle("Add Product");
+    private JButton updateButton, deleteButton;
+   
+    public DeleteUpdateProduct(ArrayList<String> data,DefaultTableModel model, int selectedRow) {
+        setTitle("Delete Update Product");
         setSize(600, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
+        
         nameLabel = new JLabel("Name:");
         nameField = new JTextField(15);
 
@@ -50,6 +49,7 @@ public class AddProduct extends JFrame {
 
         barcodeLabel = new JLabel("Barcode:");
         barcodeField = new JTextField(15);
+        barcodeField.setEditable(false);
        
         hsnLabel = new JLabel("HSN:");
         hsnField = new JTextField(15);
@@ -66,34 +66,7 @@ public class AddProduct extends JFrame {
         quantityLabel = new JLabel("Quantity:");
         quantityField = new JTextField(15);
 
-        addButton = new JButton("Add");
-        addButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String name = nameField.getText();
-                double sellingPrice = Double.parseDouble(sellingPriceField.getText());
-                double markedPrice = Double.parseDouble(markedPriceField.getText());
-                double purchasedPrice = Double.parseDouble(purchasedPriceField.getText());
-                String expiryDate = expiryField.getText();
-                String barcode = barcodeField.getText();
-                String hsn = hsnField.getText();
-                double tax = Double.parseDouble(taxField.getText());
-                String category = categoryField.getText();
-                String subcategory = subcategoryField.getText();
-                int quantity = Integer.parseInt(quantityField.getText());
-
-                // Here, you would perform the action of adding the product
-                // For demonstration purposes, we just print the product details
-                System.out.println("Added product: " + name + " - Selling Price: $" + sellingPrice +
-                                   ", Marked Price: $" + markedPrice + ", Purchased Price: $" + purchasedPrice +
-                                   ", Expiry: " + expiryDate + ", Barcode: " + barcode + ", HSN: " + hsn +
-                                   ", Tax: " + tax + ", Category: " + category + ", Subcategory: " + subcategory +
-                                   ", Quantity: " + quantity);
-                addProductToDatabase();
-                model.addRow(new Object[]{barcode,name,hsn,category,subcategory,expiryDate,tax,purchasedPrice,markedPrice,sellingPrice,quantity});
-                // You may want to clear the fields after adding the product
-                clearFields();
-            }
-        });
+        
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -188,51 +161,40 @@ public class AddProduct extends JFrame {
         gbc.gridy = 10;
         panel.add(quantityField, gbc);
 
-        gbc.gridx = 1;
+        updateButton = new JButton("Update");
+        updateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateProduct(data,model,selectedRow);
+            }
+
+        });
+
+        deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                deleteProduct(data,model,selectedRow);
+            }
+        });
+
+        // Add components to panel using GridBagConstraints
+
+        gbc.gridx = 0;
         gbc.gridy = 11;
-        panel.add(addButton, gbc);
+        panel.add(updateButton, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 11;
+        panel.add(deleteButton, gbc);
 
         add(panel);
-
+        setDateToTextField(data);
         setVisible(true);
     }
 
    
 
-	private void clearFields() {
-        nameField.setText("");
-        sellingPriceField.setText("");
-        markedPriceField.setText("");
-        purchasedPriceField.setText("");
-        expiryField.setText("");
-        barcodeField.setText("");
-        hsnField.setText("");
-        taxField.setText("");
-        categoryField.setText("");
-        subcategoryField.setText("");
-        quantityField.setText("");
-    }
-
-    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//                new AddProduct(null));
-//            }
-//        });
-    }
-
-    private void addProductToDatabase() {
-        String productName = nameField.getText();
-        double sellingPrice = Double.parseDouble(sellingPriceField.getText());
-        double markedPrice = Double.parseDouble(markedPriceField.getText());
-        double purchasedPrice = Double.parseDouble(purchasedPriceField.getText());
-        String expiryDate = expiryField.getText();
-        String barcode = barcodeField.getText();
-        String hsn = hsnField.getText();
-        double tax = Double.parseDouble(taxField.getText());
-        String category = categoryField.getText();
-        String subcategory = subcategoryField.getText();
-        int quantity = Integer.parseInt(quantityField.getText());
+	protected void deleteProduct(ArrayList<String> data, DefaultTableModel model, int selectedRow) {
+;
         Properties properties = new Properties();
         InputStream inputStream = null;
         
@@ -260,9 +222,61 @@ public class AddProduct extends JFrame {
             }
         }
         // Initialize Firebase database reference
-        productsRef = FirebaseDatabase.getInstance().getReference().child(ID).child("product");
-        // Create a new product map
-        Map<String, Object> product = new HashMap<>();
+   	 DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference().child(ID).child("product");
+
+     // Path to the node you want to delete
+
+     // Delete the node
+     databaseRef.child(data.get(0)).removeValueAsync();
+     model.removeRow(selectedRow);
+     JOptionPane.showMessageDialog(null, "Product Deleted SuccessFully", "Success", JOptionPane.INFORMATION_MESSAGE);
+     dispose();
+	}
+
+
+
+	protected void updateProduct(ArrayList<String> data, DefaultTableModel model, int selectedRow) {
+		// TODO Auto-generated method 
+		String productName = nameField.getText();
+        double sellingPrice = Double.parseDouble(sellingPriceField.getText());
+        double markedPrice = Double.parseDouble(markedPriceField.getText());
+        double purchasedPrice = Double.parseDouble(purchasedPriceField.getText());
+        String expiryDate = expiryField.getText();
+        String barcode = barcodeField.getText();
+        String hsn = hsnField.getText();
+        double tax = Double.parseDouble(taxField.getText());
+        String category = categoryField.getText();
+        String subcategory = subcategoryField.getText();
+        int quantity = Integer.parseInt(quantityField.getText());
+		 Properties properties = new Properties();
+	        InputStream inputStream = null;
+	        
+	        String ID="";
+	        try {
+	            // Load properties file
+	            inputStream = new FileInputStream("config.properties");
+	            properties.load(inputStream);
+
+	            // Access variables
+	            ID = properties.getProperty("Login.Id");
+	            
+	        } 
+	        catch (IOException e) {
+	            e.printStackTrace();
+	        } 
+	        finally {
+	            // Close InputStream
+	            if (inputStream != null) {
+	                try {
+	                    inputStream.close();
+	                } catch (IOException e) {
+	                    e.printStackTrace();
+	                }
+	            }
+	        }
+	        // Initialize Firebase database reference
+	   	DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference().child(ID).child("product");
+	   	Map<String, Object> product = new HashMap<>();
         product.put("name", productName);
         product.put("sellingPrice", sellingPrice);
         product.put("markedPrice", markedPrice);
@@ -277,8 +291,41 @@ public class AddProduct extends JFrame {
         // Generate a new key for the product
 
         // Add the product to the database under the generated key
-        productsRef.child(barcode).setValueAsync(product);
+        databaseRef.child(barcode).setValueAsync(product);
         
-        JOptionPane.showMessageDialog(null, "Product Added SuccessFully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Product Updated SuccessFully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        model.removeRow(selectedRow);
+        model.addRow(new Object[]{barcode,productName,hsn,category,subcategory,expiryDate,tax,purchasedPrice,markedPrice,sellingPrice,quantity});
+		dispose();
+	}
+
+
+
+	private void setDateToTextField(ArrayList<String> data) {
+		// TODO Auto-generated method stub
+		barcodeField.setText(data.get(0));
+		nameField.setText(data.get(1));
+        sellingPriceField.setText(data.get(9));
+        markedPriceField.setText(data.get(8));
+        purchasedPriceField.setText(data.get(7));
+        expiryField.setText(data.get(5));
+        hsnField.setText(data.get(2));
+        taxField.setText(data.get(6));
+        categoryField.setText(data.get(3));
+        subcategoryField.setText(data.get(4));
+        quantityField.setText(data.get(10));
+	}
+
+
+
+
+    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                new DeleteUpdateProduct(null);
+//            }
+//        });
     }
+
+    
 }

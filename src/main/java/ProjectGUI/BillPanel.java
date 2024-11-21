@@ -58,7 +58,83 @@ public class BillPanel extends JPanel {
         table.setFont(new Font("Trebuchet MS", Font.PLAIN, 13));
 
         // Make rows clickable
-       
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1) {
+                    JTable target = (JTable) e.getSource();
+                    int row = target.getSelectedRow();
+                    if (row != -1) {
+                        System.out.println("Selected Product: " + table.getValueAt(row,1));
+                            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                            DatabaseReference billsReference = firebaseDatabase.getReference(ID).child("Bills").child(String.valueOf(table.getValueAt(row,1)));
+                            
+                            billsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                	System.out.println("frebase called");
+                                		ArrayList<pdfProduct> bills = new ArrayList<>();
+                                		HashMap<String,String> billDetails = new HashMap<>();
+                                		billDetails.put("Customer Name",dataSnapshot.child("details").child("CustomerName").getValue(String.class));
+                                		billDetails.put("Bill Date",dataSnapshot.child("details").child("BillDate").getValue(String.class));
+                                		billDetails.put("Phone",ID);
+                                		billDetails.put("InvoiceNo",String.valueOf(table.getValueAt(row,1)));
+                                		billDetails.put("Amount",dataSnapshot.child("details").child("Amount").getValue(String.class));
+//                                		System.out.println(billDetails);
+
+                                		int n =1;
+                                        for (DataSnapshot productSnapshot : dataSnapshot.getChildren()) {
+                                        	if(!productSnapshot.getKey().equals("details")) {
+                                            	String name = productSnapshot.child("name").getValue(String.class);
+                                            	Double mrp = productSnapshot.child("MRP").getValue(Double.class);
+                                            	Double discount = productSnapshot.child("discount").getValue(Double.class);
+                                            	Double sp = productSnapshot.child("sellingPrice").getValue(Double.class);
+                                            	Double tax = productSnapshot.child("tax").getValue(Double.class);
+                                            	Double quantity = productSnapshot.child("quantity").getValue(Double.class);
+                                            	Double total = productSnapshot.child("total").getValue(Double.class);
+                                            	System.out.println(name);
+//                                            	pdfProduct(int sn,double tax,double mrp,double sp,double discount,double amount,double qnt,String itemName)
+                                            	bills.add(new pdfProduct(n,tax,mrp,sp,discount,total,quantity,name));
+                                            	n++;
+                                        	}
+                                        }
+                                        System.out.println(bills.get(0).itemName);
+                                        	DatabaseReference storeType = firebaseDatabase.getReference(ID).child("details").child("storeType");
+                                        	storeType.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                	StoreType= dataSnapshot.getValue(String.class);
+                                                	System.out.println("calling harwareInvoice from BillPanel");
+                                                	try {
+                                                	groceryInvoice hi =new groceryInvoice();
+        											hi.Generate(billDetails, bills,StoreType);
+                                                	}
+                                                	catch(InvoiceException e) {
+                                                		
+                                                	}
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+                                                    System.err.println("Error fetching data: " + databaseError);
+                                                }
+                                            });
+                                        	
+										
+                                        
+                                    
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    System.out.println("The read failed: " + databaseError.getCode());
+                                }
+                            });
+                        
+                    }
+                }
+            }
+        });
 
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         add(buttonPanel, BorderLayout.WEST);

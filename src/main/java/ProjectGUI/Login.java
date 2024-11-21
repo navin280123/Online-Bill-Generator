@@ -138,7 +138,7 @@ public class Login extends JFrame {
             public void actionPerformed(ActionEvent e) {
             	String mobile = usernameField.getText().toString();
             	String password = passwordField.getText();
-            	DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("credential"); // to save user data 
+            	DatabaseReference database = FirebaseDatabase.getInstance().getReference().child("credential");
             	database.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
