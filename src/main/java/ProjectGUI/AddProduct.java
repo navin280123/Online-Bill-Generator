@@ -25,7 +25,6 @@ public class AddProduct extends JFrame {
     private JLabel nameLabel, sellingPriceLabel, markedPriceLabel, purchasedPriceLabel, expiryLabel, barcodeLabel, hsnLabel, taxLabel, categoryLabel, subcategoryLabel, quantityLabel;
     private JTextField nameField, sellingPriceField, markedPriceField, purchasedPriceField, expiryField, barcodeField, hsnField, taxField, categoryField, subcategoryField, quantityField;
     private JButton addButton;
-    private List<String> suggestions;
     private DatabaseReference productsRef;
 
     public AddProduct(DefaultTableModel model) {
@@ -213,13 +212,6 @@ public class AddProduct extends JFrame {
         quantityField.setText("");
     }
 
-    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//                new AddProduct(null));
-//            }
-//        });
-    }
 
     private void addProductToDatabase() {
         String productName = nameField.getText();

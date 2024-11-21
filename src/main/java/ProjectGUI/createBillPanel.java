@@ -271,7 +271,7 @@ public class createBillPanel extends JFrame {
         // Initialize Firebase
         setVisible(true);
         // Fetch data from Firebase
-        fetchProducts(billNumber);
+//        fetchProducts(billNumber);
         
 	}
 	private void totalsum(double value) {

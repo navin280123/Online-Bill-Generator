@@ -47,19 +47,7 @@ public class mainPage extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					mainPage frame = new mainPage();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
+	
 	/**
 	 * Create the frame.
 	 */
@@ -173,7 +161,6 @@ public class mainPage extends JFrame {
                         data.add(String.valueOf(table.getValueAt(selectedRow, 8)));
                         data.add(String.valueOf(table.getValueAt(selectedRow, 9)));
                         data.add(String.valueOf(table.getValueAt(selectedRow, 10)));
-                        DeleteUpdateProduct c = new DeleteUpdateProduct(data,model,selectedRow);
                     }
                 }
             }
